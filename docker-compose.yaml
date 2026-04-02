@@ -1,0 +1,68 @@
+## Compose file เวอร์ชัน (กำหนดชุดของฟีเจอร์ที่ใช้)
+version: '3.8'
+
+## บล็อก services: ระบุคอนเทนเนอร์/บริการทั้งหมดที่ต้องการรัน
+services:
+  ## ชื่อบริการ: db (MySQL)
+  db:
+    ## ใช้อิมเมจ MySQL เวอร์ชัน 8.0
+    image: mysql:8.0
+    ## ตั้งชื่อคอนเทนเนอร์บนโฮสต์เพื่อให้ง่ายต่อการอ้างอิง
+    container_name: can_billsnew_db
+    ## ตัวแปรสภาพแวดล้อมที่ส่งเข้า container (ตั้งค่าเริ่มต้นของฐานข้อมูล)
+    environment:
+      ## รหัสผ่าน root ของ MySQL (ใน dev ตัวอย่างนี้เก็บตรงนี้ แต่ใน prod ให้ใช้วิธีปลอดภัยกว่า)
+      MYSQL_ROOT_PASSWORD: rootpassword
+      ## สร้างฐานข้อมูลเริ่มต้นเมื่อ container ถูกสร้างครั้งแรก
+      MYSQL_DATABASE: can_billsnew_db
+      ## ชื่อผู้ใช้ตัวอย่าง (ไม่แนะนำให้ใช้ใน production แบบตรงๆ)
+      MYSQL_USER: user
+      ## รหัสผ่านของผู้ใช้ตัวอย่าง
+      MYSQL_PASSWORD: userpassword
+    ## แม็ปพอร์ตของ container ไปยังเครื่องโฮสต์ (3306 ของ MySQL)
+    ports:
+      - "3306:3306"
+    ## เก็บข้อมูลถาวรบน volume ของ Docker เพื่อไม่ให้ข้อมูลหายเมื่อตัดคอนเทนเนอร์
+    volumes:
+      - db_data:/var/lib/mysql
+    ## รีสตาร์ทคอนเทนเนอร์อัตโนมัติเมื่อเกิดข้อผิดพลาด/รีบูตโฮสต์
+    restart: always
+    ## เชื่อมต่อบริการกับ network ชื่อ backend (กำหนดด้านล่าง)
+    networks:
+      - backend
+
+  ## บริการ phpMyAdmin สำหรับจัดการฐานข้อมูลผ่านเว็บ (สะดวกใน development)
+  phpmyadmin:
+    ## ใช้อิมเมจ phpMyAdmin อย่างเป็นทางการ
+    image: phpmyadmin/phpmyadmin:latest
+    ## ตั้งชื่อคอนเทนเนอร์
+    container_name: can_billsnew_phpmyadmin
+    ## บอกว่า phpMyAdmin ต้องรอให้ db พร้อมก่อนรัน
+    depends_on:
+      - db
+    ## ตัวแปรสภาพแวดล้อมสำหรับ phpMyAdmin (เชื่อมต่อกับบริการ db ข้างบน)
+    environment:
+      ## ชื่อ host ของฐานข้อมูล (ใช้ชื่อบริการ docker-compose)
+      PMA_HOST: db
+      ## พอร์ตของ MySQL ที่จะเชื่อมต่อ
+      PMA_PORT: 3306
+    ## เปิดพอร์ต 8080 ของเครื่องเพื่อเข้าถึง phpMyAdmin ผ่านเบราว์เซอร์
+    ports:
+      - "8081:80"
+    ## รีสตาร์ทอัตโนมัติ
+    restart: always
+    ## ใช้ network เดียวกับ db เพื่อให้สามารถติดต่อกันได้
+    networks:
+      - backend
+
+## ประกาศ volumes ที่จะใช้เก็บข้อมูลถาวร
+volumes:
+  ## volume สำหรับเก็บข้อมูล MySQL
+  db_data:
+    driver: local
+
+## ประกาศเครือข่ายที่บริการจะใช้
+networks:
+  ## เครือข่ายภายในสำหรับ backend (container ภายในติดต่อกันได้)
+  backend:
+    driver: bridge

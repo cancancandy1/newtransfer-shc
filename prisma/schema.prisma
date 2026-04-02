@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int            @id @default(autoincrement())
+  code          String         @unique
+  name          String
+  tel           String
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+  email         String?
+  memberType    String?
+  registrations Registration[]
+
+  @@map("users")
+}
+
+model MemberType {
+  id          Int             @id @default(autoincrement())
+  name        String
+  description String?
+  is_active   Boolean         @default(true)
+  sub_types   MemberSubType[]
+
+  @@map("member_types")
+}
+
+model MemberSubType {
+  id             Int            @id @default(autoincrement())
+  member_type_id Int
+  name           String
+  service_rate   Decimal        @db.Decimal(10, 2)
+  is_active      Boolean        @default(true)
+  member_type    MemberType     @relation(fields: [member_type_id], references: [id], onDelete: Cascade)
+  registrations  Registration[]
+
+  @@index([member_type_id], map: "member_sub_types_member_type_id_fkey")
+  @@map("member_sub_types")
+}
+
+model Registration {
+  id                   Int           @id @default(autoincrement())
+  user_id              Int?
+  code                 String
+  name                 String
+  tel                  String
+  member_type_name     String
+  service_rate         Decimal       @db.Decimal(10, 2)
+  quantity             Int
+  total_amount         Decimal       @db.Decimal(10, 2)
+  slip_filename        String?
+  slip_path            String?
+  status               Status        @default(PENDING)
+  consent              Boolean       @default(false)
+  submitted_at         DateTime      @default(now())
+  created_at           DateTime      @default(now())
+  updated_at           DateTime      @updatedAt
+  deleted_at           DateTime?
+  member_sub_type_id   Int
+  member_sub_type_name String
+  email                String?
+  memberType           String?
+  joined_members       String?
+  member_sub_type      MemberSubType @relation(fields: [member_sub_type_id], references: [id])
+  user                 User?         @relation(fields: [user_id], references: [id])
+
+  @@index([member_sub_type_id], map: "registrations_member_sub_type_id_fkey")
+  @@index([user_id], map: "registrations_user_id_fkey")
+  @@map("registrations")
+}
+
+model Admin {
+  id            Int       @id @default(autoincrement())
+  username      String    @unique
+  password_hash String    @db.Text
+  created_at    DateTime  @default(now())
+  firstname     String
+  lastname      String
+  role          AdminRole @default(STAFF)
+
+  @@map("admins")
+}
+
+enum Status {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum AdminRole {
+  ADMIN
+  STAFF
+}

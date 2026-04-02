@@ -1,0 +1,68 @@
+## Compose file เวอร์ชันสำหรับ production
+version: '3.8'
+
+## ใน production แนะนำให้เก็บค่าวิกฤต (รหัสผ่าน) ใน .env หรือ secrets แทนการเขียนตรงๆ
+services:
+  ## บริการฐานข้อมูล MySQL (production)
+  db:
+    ## ใช้อิมเมจ MySQL ที่เสถียร
+    image: mysql:8.0
+    ## ตั้งชื่อคอนเทนเนอร์ให้ชัดเจน
+    container_name: canbills_db_prod
+    ## ดึงตัวแปรจากไฟล์ .env (ให้สร้างไฟล์ .env แยกและเพิ่มใน .gitignore)
+    env_file:
+      - .env.prod
+    ## กำหนด environment variables สำหรับ MySQL โดยอ่านจาก .env
+    ## (เช่น MYSQL_ROOT_PASSWORD, MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD)
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ## ไม่แม็ปพอร์ต 3306 ไปยังโฮสต์ เปิดเฉพาะสำหรับ container ภายใน (ปลอดภัยกว่า)
+    # ports: []
+    ## เก็บข้อมูลถาวรไว้ที่ volume (ไม่ลบข้อมูลเมื่อนำ container ลง)
+    volumes:
+      - db_data:/var/lib/mysql
+    ## รีสตาร์ทเมื่อเกิดปัญหา ยกเว้นเมื่อถูกหยุดด้วยผู้ใช้
+    restart: unless-stopped
+    networks:
+      - backend
+
+  ## phpMyAdmin: ใน production ควรระวังการเปิดเผยสู่สาธารณะ
+  ## ตัวอย่างนี้ผมผูกพอร์ตไว้กับ localhost เท่านั้น (127.0.0.1)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: canbills_phpmyadmin_prod
+    depends_on:
+      - db
+    env_file:
+      - .env
+    ## กำหนดตัวแปรสำหรับ phpMyAdmin ให้ใช้ค่า PMA_HOST / PMA_PORT จาก .env
+    environment:
+      PMA_HOST: ${PMA_HOST}
+      PMA_PORT: ${PMA_PORT}
+    ## ผูกพอร์ตเฉพาะกับ localhost ของโฮสต์ เพื่อให้เข้าถึงได้จากเครื่องเซิร์ฟเวอร์เท่านั้น
+    ports:
+      - "127.0.0.1:8080:80"
+    restart: unless-stopped
+    networks:
+      - backend
+
+volumes:
+  ## production volume สำหรับเก็บข้อมูล MySQL
+  db_data:
+    driver: local
+
+networks:
+  backend:
+    driver: bridge
+
+## หมายเหตุ production:
+# - สร้างไฟล์ `.env` ในโฟลเดอร์เดียวกัน โดยใส่ค่าต่อไปนี้ (ตัวอย่าง):
+#   MYSQL_ROOT_PASSWORD=super_secret_root_password
+#   MYSQL_DATABASE=canbills
+#   MYSQL_USER=canbills_user
+#   MYSQL_PASSWORD=strong_password
+# - ใส่ `.env` ใน .gitignore ห้าม commit รหัสผ่านขึ้น repo
+# - ในการใช้งานจริง ควรใช้ Docker secrets หรือระบบจัดการความลับ/สมบัติของโฮสต์
