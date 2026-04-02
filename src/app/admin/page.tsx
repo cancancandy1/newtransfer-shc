@@ -103,7 +103,7 @@ export default function AdminPage() {
       });
       if (!res.ok) throw new Error("Delete failed");
     } catch (e) {
-      alert("ไม่สามารถลบข้อมูลได้: " + (e as Error).message);
+      alert("ไม่สามารถลบข้อมูลได้ : " + (e as Error).message);
       setRows(oldRows);
     }
   };
