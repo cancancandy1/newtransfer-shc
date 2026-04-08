@@ -31,11 +31,10 @@ export default function AdminPage() {
   const { data: session } = useSession();
   const [rows, setRows] = useState<Registration[]>([]);
   const [search, setSearch] = useState("");
-  const [searchInput, setSearchInput] = useState(""); // For the input field
+  const [searchInput, setSearchInput] = useState("");
   const [loading, setLoading] = useState(true);
   const [selectedRegistration, setSelectedRegistration] = useState<Registration | null>(null);
 
-  // Pagination state
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const limit = 10;
@@ -52,22 +51,19 @@ export default function AdminPage() {
       .catch(() => setLoading(false));
   }, [page, search]);
 
-  // Handle Search Input (debounce manual simple)
   useEffect(() => {
     const handler = setTimeout(() => {
       setSearch(searchInput);
-      setPage(1); // Reset to page 1 on new search
+      setPage(1);
     }, 500);
     return () => clearTimeout(handler);
   }, [searchInput]);
 
   const handleStatusChange = async (id: number, newStatus: string) => {
-    // find old status
     const oldRowIndex = rows.findIndex((r) => r.id === id);
     if (oldRowIndex === -1) return;
     const oldStatus = rows[oldRowIndex].status;
 
-    // optimistic update
     setRows((prev) =>
       prev.map((r) => (r.id === id ? { ...r, status: newStatus as Registration["status"] } : r))
     );
@@ -81,7 +77,6 @@ export default function AdminPage() {
       if (!res.ok) throw new Error("Update failed");
     } catch (e) {
       alert("ไม่สามารถเปลี่ยนสถานะได้: " + (e as Error).message);
-      // rollback
       setRows((prev) =>
         prev.map((r) => (r.id === id ? { ...r, status: oldStatus } : r))
       );
@@ -91,7 +86,6 @@ export default function AdminPage() {
   const handleDelete = async (id: number) => {
     if (!confirm("คุณต้องการลบรายการนี้ใช่หรือไม่?")) return;
 
-    // optimistic delete
     const oldRows = [...rows];
     setRows((prev) => prev.filter((r) => r.id !== id));
 
@@ -108,7 +102,6 @@ export default function AdminPage() {
     }
   };
 
-  // filtering is now handled by the server, so we just use rows
   const filtered = rows;
   const totalPages = Math.ceil(total / limit);
 
@@ -117,7 +110,7 @@ export default function AdminPage() {
     if (!row) return;
     const win = window.open("", "_blank");
     if (!win) return;
-    const imageUrl = `${window.location.origin}${row.slip_path}`;
+    const imageUrl = `${window.location.origin}${process.env.NEXT_PUBLIC_BASE_PATH || ""}${row.slip_path}`;
     win.document.write(`
       <html><head><title>ใบสมัคร #${id}</title>
       <style>
@@ -141,15 +134,14 @@ export default function AdminPage() {
           }
         }
         table { width: 60%; border-collapse: collapse; margin: 1rem auto; }
-        td { padding: .3rem; border: 1px solid #e0e0e0ff; text-align: left; }
-        th { width: 30%; padding: .3rem; border: 1px solid #e0e0e0ff; text-align: left; background: #fcfcfc; }
+        td { padding: .3rem; border: 1px solid #e0e0e0; text-align: left; }
+        th { width: 30%; padding: .3rem; border: 1px solid #e0e0e0; text-align: left; background: #fcfcfc; }
       </style>
       </head><body>
       <div class="content-wrapper" style="padding: 0rem; margin: 0rem;">
-        <!-- โลโก้ SUT และ SHC -->
         <div style="text-align: center; margin: 0px; padding: 0px;">
-          <img src="/SUT_logo_svg.svg" style="height: 70px;" />
-          <img src="/sSHC_logo_png.png" style="height: 70px;" />
+          <img src="${process.env.NEXT_PUBLIC_BASE_PATH || ""}/SUT_logo_svg.svg" style="height: 70px;" />
+          <img src="${process.env.NEXT_PUBLIC_BASE_PATH || ""}/sSHC_logo_png.png" style="height: 70px;" />
         </div>
         <h2 style="text-align: center; font-size: 22px; padding-bottom: 0rem; margin-bottom: 0rem;">เอกสารการจ่ายเงินค่าสมัครสมาชิก</h2>
         <p style="text-align: center; font-size: 17px; padding: 0rem; margin: 0.5rem;">สถานกีฬาและสุขภาพ มหาวิทยาลัยเทคโนโลยีสุรนารี</p>
@@ -193,10 +185,6 @@ export default function AdminPage() {
             <th style="font-weight: 600; font-size: 15px;">รวมเป็นเงิน</th>
             <td style="font-size: 15px;">${row.total_amount.toLocaleString()} บาท</td>
           </tr>
-          <!-- <tr>
-            <th style="font-weight: 600; font-size: 15px;">สถานะ</th>
-            <td style="font-size: 15px;">${STATUS_LABELS[row.status]}</td>
-          </tr> -->
           <tr>
             <th style="font-weight: 600; font-size: 15px;">วันที่สมัคร</th>
             <td style="font-size: 15px;">${new Date(row.submitted_at).toLocaleString("th-TH")}</td>
@@ -237,11 +225,11 @@ export default function AdminPage() {
             window.print();
             window.close();
           };
-        <\/script>
+        </script>
       </body></html>
     `);
-    console.log(imageUrl); //เช็คว่าเจอจริงมั้ย
-    console.log("WINDOW TEST:", win); //เช็คว่าเจอจริงมั้ย
+    console.log(imageUrl); 
+    console.log("WINDOW TEST:", win); 
     win.document.close();
   };
 
@@ -261,21 +249,14 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* Summary cards - showing current page view or total */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "1rem", marginBottom: "1.5rem" }}>
           {[
             { label: "ทั้งหมด", value: rows.length, color: "#1a56db" },
             { label: "รอดำเนินการ", value: rows.filter(r => r.status === "PENDING").length, color: "#d97706" },
             { label: "อนุมัติแล้ว", value: rows.filter(r => r.status === "APPROVED").length, color: "#059669" },
-            // { label: "รายการทั้งหมด", value: total, color: "#1a56db" },
-            // { label: "หน้าปัจจุบัน", value: `${page} / ${totalPages || 1}`, color: "#059669" },
-            // { label: `ตัวกรอง: ${searchInput}`, value: searchInput ? "เริ่มค้นหา..." : "ไม่มี", color: "#d97706" },
           ].map((s) => (
             <div key={s.label} className="card" style={{ padding: "1.25rem", textAlign: "center" }}>
               <div style={{ fontSize: "2rem", fontWeight: 700, color: s.color }}>{s.value}</div>
-              {/* <div style={{ fontSize: "1.5rem", fontWeight: 700, color: s.color, minHeight: "2.25rem" }}>
-                  {s.value}
-              </div> */}
               <div style={{ fontSize: "0.975rem", color: "var(--gray-500)", marginTop: "0.25rem" }}>{s.label}</div>
             </div>
           ))}
@@ -344,8 +325,8 @@ export default function AdminPage() {
                         <div
                           style={{
                             display: "flex",
-                            justifyContent: "center", // แนวนอน
-                            alignItems: "center",     // แนวตั้ง
+                            justifyContent: "center", 
+                            alignItems: "center",     
                             gap: "0.25rem",
                           }}
                         >
@@ -409,7 +390,6 @@ export default function AdminPage() {
         </div>
       </div>
 
-      {/* Modal for viewing details */}
       {selectedRegistration && (
         <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.5)", zIndex: 1000, display: "flex", alignItems: "center", justifyContent: "center", padding: "1rem" }}>
           <div style={{ backgroundColor: "white", padding: "2rem", borderRadius: "8px", maxWidth: "700px", width: "100%", maxHeight: "90vh", overflowY: "auto" }}>
@@ -440,7 +420,7 @@ export default function AdminPage() {
             </table>
             <div style={{ marginBottom: "1.5rem" }}>
               <strong>สลิปโอนเงิน:</strong><br />
-              <img src={selectedRegistration.slip_path} alt="Slip" style={{ maxWidth: "100%", marginTop: "0.5rem", borderRadius: "8px", border: "1px solid #ccc", maxHeight: "400px", objectFit: "contain" }} />
+              <img src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}${selectedRegistration.slip_path}`} alt="Slip" style={{ maxWidth: "100%", marginTop: "0.5rem", borderRadius: "8px", border: "1px solid #ccc", maxHeight: "400px", objectFit: "contain" }} />
             </div>
             
           </div>
