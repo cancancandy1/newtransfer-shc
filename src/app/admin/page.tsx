@@ -140,8 +140,8 @@ export default function AdminPage() {
       </head><body>
       <div class="content-wrapper" style="padding: 0rem; margin: 0rem;">
         <div style="text-align: center; margin: 0px; padding: 0px;">
-          <img src="${process.env.NEXT_PUBLIC_BASE_PATH || ""}/SUT_logo_svg.svg" style="height: 70px;" />
-          <img src="${process.env.NEXT_PUBLIC_BASE_PATH || ""}/sSHC_logo_png.png" style="height: 70px;" />
+          <img src="${window.location.origin}${process.env.NEXT_PUBLIC_BASE_PATH || ""}/SUT_logo_svg.svg" style="height: 70px;" />
+          <img src="${window.location.origin}${process.env.NEXT_PUBLIC_BASE_PATH || ""}/sSHC_logo_png.png" style="height: 70px;" />
         </div>
         <h2 style="text-align: center; font-size: 22px; padding-bottom: 0rem; margin-bottom: 0rem;">เอกสารการจ่ายเงินค่าสมัครสมาชิก</h2>
         <p style="text-align: center; font-size: 17px; padding: 0rem; margin: 0.5rem;">สถานกีฬาและสุขภาพ มหาวิทยาลัยเทคโนโลยีสุรนารี</p>
