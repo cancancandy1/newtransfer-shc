@@ -148,19 +148,13 @@ export default function AdminPage() {
         
         <table>
           <tr>
-            <th style="font-weight: 600; font-size: 15px;">รหัสผู้ใช้</th>
+            <th style="font-weight: 600; font-size: 15px;">รหัสสมาชิก</th>
             <td style="font-size: 15px;">${row.code}</td>
           </tr>
           <tr>
             <th style="font-weight: 600; font-size: 15px;">ชื่อ-นามสกุล</th>
             <td style="font-size: 15px;">${row.name}</td>
           </tr>
-          ${row.joined_members ? `
-          <tr>
-            <th style="font-weight: 600; font-size: 15px;">สมาชิกที่ร่วมจ่าย</th>
-            <td style="font-size: 15px;">${row.joined_members.split(',').join(', ')}</td>
-          </tr>
-          ` : ""}
           <tr>
             <th style="font-weight: 600; font-size: 15px;">ประเภท</th>
             <td style="font-size: 15px;">${row.memberType || "-"}</td>
@@ -177,9 +171,15 @@ export default function AdminPage() {
             <th style="font-weight: 600; font-size: 15px;">รูปแบบ</th>
             <td style="font-size: 15px;">${row.member_sub_type_name}</td>
           </tr>
+          ${row.joined_members ? `
           <tr>
-            <th style="font-weight: 600; font-size: 15px;">จำนวน / อัตราค่าบริการ</th>
-            <td style="font-size: 15px;">${row.quantity} ท่าน (ท่านละ ${row.service_rate.toLocaleString()} บาท)</td>
+            <th style="font-weight: 600; font-size: 15px;">รหัสสมาชิก<br>ที่ร่วมจ่าย</th>
+            <td style="font-size: 15px;">${row.joined_members.split(',').join(', ')}</td>
+          </tr>
+          ` : ""}
+          <tr>
+            <th style="font-weight: 600; font-size: 15px;">จำนวน</th>
+            <td style="font-size: 15px;">${row.quantity} ท่าน</td>
           </tr>
           <tr>
             <th style="font-weight: 600; font-size: 15px;">รวมเป็นเงิน</th>
@@ -220,12 +220,20 @@ export default function AdminPage() {
       </div>
 
       <script>
-          const img = document.getElementById("slipImage");
-          img.onload = function() {
+        Promise.all(Array.from(document.images).map(img => {
+          if (img.complete) return Promise.resolve();
+          return new Promise(resolve => {
+            img.onload = resolve;
+            img.onerror = resolve;
+          });
+        })).then(() => {
+          // เพิ่มเวลาดีเลย์นิดหน่อยกันเหนียว เพื่อให้เบราว์เซอร์วาดรูปลงหน้าจอเสร็จสมบูรณ์
+          setTimeout(() => {
             window.print();
             window.close();
-          };
-        </script>
+          }, 300);
+        });
+      </script>
       </body></html>
     `);
     console.log(imageUrl); 

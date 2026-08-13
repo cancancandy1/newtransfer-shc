@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  /* config options here */
+  // sub-path deployment: /new-transfer
   // basePath: '/new-transfer',
+  // assetPrefix: '/new-transfer',
 };
 
 export default nextConfig;

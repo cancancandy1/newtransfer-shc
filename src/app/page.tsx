@@ -218,10 +218,10 @@ export default function HomePage() {
           )}
 
           <form onSubmit={handleSubmit}>
-            {/* Section 1: ข้อมูลผู้สมัคร */}
+            {/* Section 1: Applicant Information */}
             <div className="section-title">ข้อมูลผู้สมัคร</div>
 
-            {/* 1. รหัสผู้ใช้ */}
+            {/* 1. User Code */}
             <div className="form-grid">
               <div className="form-group">
                 <label className="form-label" htmlFor="code">
@@ -233,7 +233,6 @@ export default function HomePage() {
                   name="code"
                   type="text"
                   className="form-control"
-                  placeholder="เช่น EMP001 หรือ A12345"
                   value={form.code}
                   onChange={handleChange}
                   required
@@ -260,7 +259,6 @@ export default function HomePage() {
                   name="memberType"
                   type="text"
                   className={`form-control ${isAutofilled ? "is-autofilled" : ""}`}
-                  placeholder="ประเภทสมาชิก"
                   value={form.memberType}
                   onChange={handleChange}
                   required
@@ -269,7 +267,7 @@ export default function HomePage() {
             </div>
 
             <div className="form-grid">
-              {/* 2. ชื่อ-นามสกุล */}
+              {/* 2. Full Name */}
               <div className="form-group" style={{ margin: 0 }}>
                 <label className="form-label" htmlFor="name">
                   ชื่อ-นามสกุล <span className="required">*</span>
@@ -279,14 +277,13 @@ export default function HomePage() {
                   name="name"
                   type="text"
                   className={`form-control ${isAutofilled ? "is-autofilled" : ""}`}
-                  placeholder="ชื่อ นามสกุล"
                   value={form.name}
                   onChange={handleChange}
                   required
                 />
               </div>
 
-              {/* 3. เบอร์โทรศัพท์ */}
+              {/* 3. Phone Number */}
               <div className="form-group" style={{ margin: 0 }}>
                 <label className="form-label" htmlFor="tel">
                   เบอร์โทรศัพท์ <span className="required">*</span>
@@ -296,7 +293,6 @@ export default function HomePage() {
                   name="tel"
                   type="tel"
                   className={`form-control ${isAutofilled ? "is-autofilled" : ""}`}
-                  placeholder="0XX-XXX-XXXX"
                   value={form.tel}
                   onChange={handleChange}
                   required
@@ -305,7 +301,7 @@ export default function HomePage() {
             </div>
 
             <div className="form-grid" style={{ marginTop: "1rem" }}>
-              {/* 3.5 อีเมล */}
+              {/* 3.5 Email (Optional) */}
               <div className="form-group" style={{ margin: 0, gridColumn: "span 2" }}>
                 <label className="form-label" htmlFor="email">
                   อีเมล (ไม่บังคับ)
@@ -315,7 +311,6 @@ export default function HomePage() {
                   name="email"
                   type="email"
                   className={`form-control ${isAutofilled && form.email ? "is-autofilled" : ""}`}
-                  placeholder="example@sut.ac.th"
                   value={form.email}
                   onChange={handleChange}
                   required
@@ -323,11 +318,11 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Section 2: ข้อมูลการสมัคร */}
+            {/* Section 2: Registration Details */}
             <div className="section-title" style={{ marginTop: "1.5rem" }}>ข้อมูลการสมัคร</div>
 
             <div className="form-grid">
-              {/* 4. ประเภทสมาชิก */}
+              {/* 4. Member Type */}
               <div className="form-group" style={{ margin: 0 }}>
                 <label className="form-label" htmlFor="member_type_id">
                   ประเภทสมาชิก <span className="required">*</span>
@@ -349,7 +344,7 @@ export default function HomePage() {
                 </select>
               </div>
 
-              {/* 4.5. ประเภทสมาชิกย่อย */}
+              {/* 4.5. Member Sub Type */}
               <div className="form-group" style={{ margin: 0 }}>
                 <label className="form-label" htmlFor="member_sub_type_id">
                   รูปแบบ / ระยะเวลา <span className="required">*</span>
@@ -372,7 +367,7 @@ export default function HomePage() {
                 </select>
               </div>
 
-              {/* 5. อัตราค่าบริการ */}
+              {/* 5. Service Rate */}
               <div className="form-group" style={{ margin: 0 }}>
                 <label className="form-label">
                   อัตราค่าบริการ (บาท/คน)
@@ -387,7 +382,7 @@ export default function HomePage() {
             </div>
 
             <div className="form-grid" style={{ marginTop: "1.25rem" }}>
-              {/* 6. จำนวนคน */}
+              {/* 6. Quantity */}
               <div className="form-group" style={{ margin: 0 }}>
                 <label className="form-label" htmlFor="quantity">
                   จำนวนคนที่สมัคร <span className="required">*</span>
@@ -398,14 +393,14 @@ export default function HomePage() {
                   type="number"
                   className="form-control"
                   min="1"
-                  max="3"  /*กำหนดให้เพิ่มได้ไม่เกิน 3 คน*/
+                  max="5"  /* Max 5 people */
                   value={form.quantity}
                   onChange={handleChange}
                   required
                 />
               </div>
 
-              {/* 7. รวมเงิน */}
+              {/* 7. Total Amount */}
               <div className="form-group" style={{ margin: 0 }}>
                 <label className="form-label">รวมเงิน</label>
                 <div className="amount-display">
@@ -417,13 +412,13 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* รหัสสมาชิกที่ร่วมจ่าย (ถ้ามีมากกว่า 1 คน) */}
+            {/* Joined members code (if quantity > 1) */}
             {Number(form.quantity) > 1 && (
               <div className="section-title" style={{ marginTop: "1.5rem" }}>รหัสสมาชิกที่ร่วมจ่าย</div>
             )}
             {Number(form.quantity) > 1 && (
               <div className="form-grid">
-                {Array.from({ length: Math.min(Number(form.quantity) - 1, 2) }).map((_, i) => (
+                {Array.from({ length: Math.min(Number(form.quantity) - 1, 4) }).map((_, i) => (
                   <div className="form-group" style={{ margin: 0 }} key={i}>
                     <label className="form-label">
                       รหัสนักศึกษา / รหัสพนักงาน / รหัสสมาชิก คนที่ {i + 2} <span className="required">*</span>
@@ -431,7 +426,7 @@ export default function HomePage() {
                     <input
                       type="text"
                       className="form-control"
-                      placeholder={`รหัสพนักงานคนที่ ${i + 2}`}
+                      placeholder={`รหัสสมาชิกคนที่ ${i + 2}`}
                       value={joinedMembers[i] || ""}
                       onChange={(e) => {
                         const newMembers = [...joinedMembers];
@@ -446,10 +441,10 @@ export default function HomePage() {
               </div>
             )}
 
-            {/* Section 3: เอกสารแนบ */}
+            {/* Section 3: Attachments */}
             <div className="section-title" style={{ marginTop: "1.5rem" }}>เอกสารแนบ</div>
 
-            {/* 8. อัปโหลดสลิป */}
+            {/* 8. Upload Payment Slip */}
             <div className="form-group">
               <label className="form-label">
                 สลิปการโอนเงิน <span className="required">*</span>
@@ -493,7 +488,7 @@ export default function HomePage() {
               )}
             </div>
 
-            {/* 10. ยินยอมการเก็บข้อมูล */}
+            {/* 10. Consent */}
             <div className="consent-box" style={{ marginBottom: "1.5rem" }}>
               <input
                 type="checkbox"
@@ -501,15 +496,20 @@ export default function HomePage() {
                 name="consent"
                 checked={form.consent}
                 onChange={handleChange}
+                required
               />
               <label htmlFor="consent">
-                ข้าพเจ้ายินยอมให้ทางระบบ SHC Transfer เก็บรวบรวม ใช้ และ/หรือเปิดเผยข้อมูลส่วนบุคคลของข้าพเจ้า
-                เพื่อวัตถุประสงค์ในการดำเนินการสมัครสมาชิก ตามนโยบายความเป็นส่วนตัว
+                ข้าพเจ้าได้อ่านและยินยอมตาม
+                <a href="https://pdpa.sut.ac.th/wp-content/uploads/2022/05/1687.pdf.pdf" target="_blank" rel="noopener noreferrer" style={{ color: "var(--primary)" }}>
+                  ประกาศนโยบายการคุ้มครองข้อมูลส่วนบุคคล พ.ศ. ๒๕๖๕ (Privacy Policy)
+                </a>
+                <br />มหาวิทยาลัยเทคโนโลยีสุรนารี และยินยอมให้หน่วยงานสถานกีฬาและสุขภาพในการเก็บรวบรวม ใช้ และประมวลผลข้อมูลส่วนบุคคลของข้าพเจ้า
+                เพื่อการให้บริการและการบริหารจัดการระบบ ตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. ๒๕๖๒ (PDPA)
                 <span style={{ color: "var(--danger)" }}> *</span>
               </label>
             </div>
 
-            {/* 9. ปุ่มส่ง */}
+            {/* 9. Submit Button */}
             <button
               type="submit"
               className="btn btn-primary btn-lg"

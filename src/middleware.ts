@@ -5,5 +5,10 @@ import { authConfig } from "@/lib/auth.config";
 export default NextAuth(authConfig).auth;
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/auth/:path*"],
+  // Next.js strip basePath ออกก่อนส่งให้ middleware
+  // ดังนั้น matcher ใช้แค่ path หลัง /new-transfer เท่านั้น
+  matcher: [
+    "/admin/:path*",
+    "/api/auth/:path*",
+  ],
 };

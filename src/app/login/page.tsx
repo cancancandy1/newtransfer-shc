@@ -1,9 +1,8 @@
 "use client";
 import { useState } from "react";
-import { signIn, SessionProvider } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-
 
 export default function LoginPage() {
   const router = useRouter();
@@ -25,6 +24,7 @@ export default function LoginPage() {
       if (res?.error) {
         setError("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง");
       } else {
+        // Next.js prepend basePath ให้อัตโนมัติ → /new-transfer/admin
         router.push("/admin");
       }
     } finally {
@@ -32,10 +32,7 @@ export default function LoginPage() {
     }
   };
 
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || undefined;
-
   return (
-    <SessionProvider basePath={basePath ? `${basePath}/api/auth` : undefined}>
     <>
       <nav className="navbar">
         <Link href="/" className="navbar-brand">
@@ -104,6 +101,5 @@ export default function LoginPage() {
         </div>
       </div>
     </>
-    </SessionProvider>
   );
 }

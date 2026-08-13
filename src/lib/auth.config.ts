@@ -1,35 +1,40 @@
 import type { NextAuthConfig } from "next-auth";
 
-// Base auth config — ใช้ทั้งใน middleware (Edge) และ auth.ts (Node.js)
-// ห้าม import Prisma ที่นี่ เพราะ Edge runtime ไม่รองรับ
+// Base path of the app
+const BASE_PATH = "/new-transfer";
+
+// Base auth config - used in middleware (Edge) and auth.ts (Node.js)
 export const authConfig: NextAuthConfig = {
   trustHost: true,
-  basePath: `${process.env.NEXT_PUBLIC_BASE_PATH || ""}/api/auth`,
+  basePath: "/api/auth",
   pages: {
+    // Next.js will automatically prepend basePath -> /new-transfer/login
     signIn: "/login",
   },
   session: { strategy: "jwt" },
   callbacks: {
-    // ตรวจสอบสิทธิ์เข้าถึง — ทำงานใน Edge middleware
+    // Check access rights - runs in Edge middleware
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const isAdminPage = nextUrl.pathname.startsWith("/admin");
 
-      // ถ้าไม่ได้ login ให้ redirect ไปหน้า login
+      // If not logged in, redirect to login
       if (isAdminPage && !isLoggedIn) return false;
 
-      // ตรวจสอบ RBAC: เฉพาะ role=ADMIN ที่เข้า /admin/admins ได้
+      // Check RBAC: only role=ADMIN can access /admin/admins
       if (nextUrl.pathname.startsWith("/admin/admins")) {
-        const role = (auth?.user as { role?: string })?.role;
+         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const role = (auth?.user as any)?.role;
         if (role !== "ADMIN") {
-          return Response.redirect(new URL("/admin", nextUrl));
+          // redirect back to /admin
+          return Response.redirect(new URL(`${BASE_PATH}/admin`, nextUrl.origin));
         }
       }
 
       return true;
     },
 
-    // บันทึก firstname, lastname, role ลง JWT token (ปลอดภัยใน Edge)
+    // Save user info to JWT token
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     jwt({ token, user }: { token: any; user: any }) {
       if (user) {
@@ -41,7 +46,7 @@ export const authConfig: NextAuthConfig = {
       return token;
     },
 
-    // ส่ง firstname, lastname, role ไปยัง session object (ปลอดภัยใน Edge)
+    // Send user info to session object
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     session({ session, token }: { session: any; token: any }) {
       session.user.id = token.id as string;
@@ -51,5 +56,5 @@ export const authConfig: NextAuthConfig = {
       return session;
     },
   },
-  providers: [], // providers อยู่ใน auth.ts (Node.js only)
+  providers: [], // providers are in auth.ts (Node.js only)
 };
