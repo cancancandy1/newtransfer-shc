@@ -43,7 +43,13 @@ export default function LoginPage() {
       <div className="login-wrapper">
         <div className="login-card" >
           <div className="login-logo">
-            <div style={{ fontSize: "3rem", marginBottom: "0.5rem" }}>🔐</div>
+            <div style={{ marginBottom: "0.25rem", display: "flex", justifyContent: "center" }}>
+              <img
+                src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/SHC_Logo.svg`}
+                alt="SHC Logo"
+                style={{ height: "90px", width: "auto", objectFit: "contain" }}
+              />
+            </div>
             <h1>Admin Sign-in</h1>
             <p>เข้าสู่ระบบเพื่อจัดการข้อมูล (สำหรับผู้ดูแล)</p>
           </div>

@@ -10,6 +10,11 @@ import {
   resetAdminPassword,
 } from "@/app/actions/admin";
 import { AdminRole } from "@prisma/client";
+import {
+  PencilIcon,
+  TrashIcon,
+  KeyIcon
+} from "@heroicons/react/24/outline";
 
 // ประเภทข้อมูล admin
 interface AdminItem {
@@ -211,11 +216,11 @@ export default function AdminsClient({ admins: initialAdmins }: { admins: AdminI
               <table className="datatable">
                 <thead>
                   <tr>
-                    <th style={{ fontSize: "1rem" }}>ลำดับ</th>
+                    <th style={{ fontSize: "1rem", textAlign: "center" }}>ลำดับ</th>
                     <th style={{ fontSize: "1rem" }}>ชื่อ-นามสกุล</th>
                     <th style={{ fontSize: "1rem" }}>ชื่อผู้ใช้</th>
                     <th style={{ fontSize: "1rem" }}>บทบาท</th>
-                    <th style={{ fontSize: "1rem", textAlign: "center" }}>จัดการ</th>
+                    <th style={{ fontSize: "1rem" }}>จัดการ</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -248,7 +253,8 @@ export default function AdminsClient({ admins: initialAdmins }: { admins: AdminI
                           style={{ background: "#e2e8f0", color: "#1e293b", padding: "0.25rem 0.6rem" }}
                           onClick={() => openEdit(admin)}
                         >
-                          ✏️ แก้ไข
+                          <PencilIcon style={{width: "0.9rem", height: "0.9rem"}}/>
+                          แก้ไข
                         </button>
                         {/* ปุ่มรีเซ็ตรหัสผ่าน */}
                         <button
@@ -256,7 +262,8 @@ export default function AdminsClient({ admins: initialAdmins }: { admins: AdminI
                           style={{ background: "#fef3c7", color: "#92400e", padding: "0.25rem 0.6rem" }}
                           onClick={() => openReset(admin)}
                         >
-                          🔑 รีเซ็ตรหัสผ่าน
+                          <KeyIcon style={{width: "0.9rem", height: "0.9rem"}}/>
+                          รีเซ็ตรหัสผ่าน
                         </button>
                         {/* ปุ่มลบ */}
                         <button
@@ -264,7 +271,8 @@ export default function AdminsClient({ admins: initialAdmins }: { admins: AdminI
                           style={{ background: "#fee2e2", color: "#b91c1c", padding: "0.25rem 0.6rem" }}
                           onClick={() => openDelete(admin)}
                         >
-                          🗑️ ลบ
+                          <TrashIcon style={{width: "0.9rem", height: "0.9rem"}}/>
+                          ลบ
                         </button>
                       </td>
                     </tr>

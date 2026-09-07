@@ -5,6 +5,10 @@ import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { sarabunFont } from "@/lib/font/sarabun-font";
+import {
+  DocumentChartBarIcon,
+  DocumentTextIcon
+} from "@heroicons/react/24/outline";
 
 interface Registration {
   id: number;
@@ -197,10 +201,12 @@ export default function AdminReportPage() {
 
         <div style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem", alignItems: "center" }}>
           <button onClick={exportExcel} disabled={exportLoading} className="btn btn-primary" style={{ backgroundColor: "#16a34a", opacity: exportLoading ? 0.7 : 1 }}>
-            📊 Export Excel
+            <DocumentChartBarIcon style={{width: "1.3rem", height: "1.3rem"}}/> 
+            Export Excel
           </button>
           <button onClick={exportPDF} disabled={exportLoading} className="btn btn-primary" style={{ backgroundColor: "#dc2626", opacity: exportLoading ? 0.7 : 1 }}>
-            📄 Export PDF
+            <DocumentTextIcon style={{width: "1.3rem", height: "1.3rem"}}/>
+            Export PDF
           </button>
           {exportLoading && <span style={{ color: "var(--gray-500)", fontSize: "0.9rem" }}>กำลังดึงข้อมูลทั้งหมดเพื่อสร้างไฟล์...</span>}
         </div>

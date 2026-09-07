@@ -1,4 +1,5 @@
 import type { NextAuthConfig } from "next-auth";
+import { authCookies } from "@/lib/authCookies";
 
 // Base path of the app
 const BASE_PATH = "/new-transfer";
@@ -7,6 +8,7 @@ const BASE_PATH = "/new-transfer";
 export const authConfig: NextAuthConfig = {
   trustHost: true,
   basePath: "/api/auth",
+  cookies: authCookies,
   pages: {
     // Next.js will automatically prepend basePath -> /new-transfer/login
     signIn: "/login",

@@ -2,6 +2,19 @@
 import { useState, useEffect, useCallback } from "react";
 import Navbar from "@/components/Navbar";
 
+// ==========================================
+// 🎨 Heroicons (https://heroicons.com/)
+// สามารถเปลี่ยน Icon ได้ง่ายๆ โดยเปลี่ยนชื่อ Import จาก @heroicons/react/24/outline หรือ /24/solid
+// ==========================================
+import {
+  CheckCircleIcon,
+  ExclamationTriangleIcon,
+  CheckIcon,
+  PaperClipIcon,
+  PhotoIcon,
+  PaperAirplaneIcon,
+} from "@heroicons/react/24/outline";
+
 interface MemberSubType {
   id: number;
   name: string;
@@ -182,7 +195,7 @@ export default function HomePage() {
       };
 
       if (res.ok) {
-        setAlert({ type: "success", message: `✅ ส่งข้อมูลสำเร็จ! หมายเลขรายการอ้างอิง: #${data.id}` });
+        setAlert({ type: "success", message: `ส่งข้อมูลสำเร็จ! หมายเลขรายการอ้างอิง: #${data.id}` });
         setForm(initialFormState);
         setSlipFile(null);
         setJoinedMembers([]);
@@ -212,8 +225,13 @@ export default function HomePage() {
           </p>
 
           {alert && (
-            <div className={`alert alert-${alert.type}`}>
-              {alert.message}
+            <div className={`alert alert-${alert.type}`} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+              {alert.type === "success" ? (
+                <CheckCircleIcon style={{ width: "1.25rem", height: "1.25rem", flexShrink: 0 }} />
+              ) : (
+                <ExclamationTriangleIcon style={{ width: "1.25rem", height: "1.25rem", flexShrink: 0 }} />
+              )}
+              <span>{alert.message}</span>
             </div>
           )}
 
@@ -245,8 +263,9 @@ export default function HomePage() {
                 )}
               </div>
               {isAutofilled && (
-                <p style={{ fontSize: "0.75rem", color: "#059669", marginTop: "0.25rem" }}>
-                  ✓ พบข้อมูลในระบบ
+                <p style={{ fontSize: "0.75rem", color: "#059669", marginTop: "0.25rem", display: "flex", alignItems: "center", gap: "0.25rem" }}>
+                  <CheckIcon style={{ width: "0.9rem", height: "0.9rem" }} />
+                  พบข้อมูลในระบบ
                 </p>
               )}
               </div>
@@ -461,7 +480,9 @@ export default function HomePage() {
                 />
                 {!slipFile ? (
                   <>
-                    <div className="upload-icon">📎</div>
+                    <div className="upload-icon" style={{ display: "flex", justifyContent: "center", marginBottom: "0.5rem" }}>
+                      <PaperClipIcon style={{ width: "2.25rem", height: "2.25rem", color: "var(--gray-400)" }} />
+                    </div>
                     <div className="upload-text">
                       <strong>คลิกเพื่อเลือกไฟล์</strong> หรือลากวางที่นี่
                     </div>
@@ -470,8 +491,8 @@ export default function HomePage() {
                     </div>
                   </>
                 ) : (
-                  <div className="upload-preview">
-                    <span style={{ fontSize: "1.5rem" }}>🖼️</span>
+                  <div className="upload-preview" style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                    <PhotoIcon style={{ width: "2rem", height: "2rem", color: "var(--primary)", flexShrink: 0 }} />
                     <div>
                       <div style={{ fontWeight: 600, fontSize: "0.875rem" }}>{slipFile.name}</div>
                       <div style={{ fontSize: "0.75rem", color: "var(--gray-500)" }}>
@@ -482,8 +503,9 @@ export default function HomePage() {
                 )}
               </div>
               {fileError && (
-                <p style={{ fontSize: "0.75rem", color: "var(--danger)", marginTop: "0.35rem" }}>
-                  ⚠️ {fileError}
+                <p style={{ fontSize: "0.75rem", color: "var(--danger)", marginTop: "0.35rem", display: "flex", alignItems: "center", gap: "0.25rem" }}>
+                  <ExclamationTriangleIcon style={{ width: "0.9rem", height: "0.9rem" }} />
+                  {fileError}
                 </p>
               )}
             </div>
@@ -521,7 +543,10 @@ export default function HomePage() {
                   <div className="spinner" /> กำลังส่งข้อมูล...
                 </>
               ) : (
-                "📨 ส่งใบสมัคร"
+                <span style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", justifyContent: "center" }}>
+                  <PaperAirplaneIcon style={{ width: "1.25rem", height: "1.25rem" }} />
+                  ส่งใบสมัคร
+                </span>
               )}
             </button>
           </form>

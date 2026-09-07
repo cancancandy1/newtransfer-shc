@@ -2,6 +2,11 @@
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import AdminNavbar from "@/components/AdminNavbar";
+import {
+  MagnifyingGlassIcon,
+  PrinterIcon,
+  TrashIcon
+} from "@heroicons/react/24/outline";
 
 interface Registration {
   id: number;
@@ -248,7 +253,9 @@ export default function AdminPage() {
         <div className="page-header">
           <h1>รายการสมัครสมาชิกทั้งหมด</h1>
           <div className="search-bar">
-            <span>🔍</span>
+            <span>
+              <MagnifyingGlassIcon style={{ width: "1.1rem", height: "1.1rem" }} />
+            </span>
             <input
               placeholder="ค้นหา รหัส / ชื่อ / เบอร์..."
               value={searchInput}
@@ -353,7 +360,7 @@ export default function AdminPage() {
                             style={{ padding: "0.25rem 0.5rem" }}
                             title="พิมพ์ใบสมัคร"
                           >
-                            🖨️ พิมพ์
+                            <PrinterIcon style={{ width: "1.1rem", height: "1.1rem" }} /> พิมพ์
                           </button>
 
                           <button
@@ -362,7 +369,7 @@ export default function AdminPage() {
                             style={{ padding: "0.25rem 0.5rem" }}
                             title="ลบข้อมูล"
                           >
-                            ลบ
+                            <TrashIcon style={{width: "1.1rem", height: "1.1rem"}}/> ลบ
                           </button>
                         </div>
                       </td>
